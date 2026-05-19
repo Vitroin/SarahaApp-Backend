@@ -1,0 +1,7 @@
+node_modules/
+.env
+.DS_Store
+dist/
+client_secret_*.json
+uploads/
+/config
