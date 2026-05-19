@@ -8,8 +8,10 @@ export function bootstrap(app,express){
     app.use(express.json());
     app.use("/uploads",express.static("uploads"))
     app.use(cors({
-        origin: "*"
-    }));
+    origin: ["http://localhost:3001", "http://localhost:3000"],
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+    allowedHeaders: ["Content-Type", "authorization", "refreshtoken"]
+    }))
 
     app.use("/auth", authRouter);
     app.use("/user", userRouter);

@@ -13,7 +13,8 @@ const schema = new Schema(
             default: "access"
         }
      },
-     {tmestamps: true}
+    { timestamps: true }
+
 )
 
 export const Token = model("Token", schema)

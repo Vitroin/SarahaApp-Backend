@@ -32,6 +32,16 @@ export const deleteAccount = async (req,res, next) =>{
 
 }
 
+export const getMe = async (req, res, next) => {
+  const user = await User.findById(req.user._id);
+  if (!user) throw new Error("User not found", { cause: 404 });
+  return res.status(200).json({
+    message: "User fetched successfully",
+    success: true,
+    data: user
+  });
+};
+
 
 export const uploadProfilePicture = async (req,res, next) =>{
         if (req.user.profilePic){
@@ -61,25 +71,38 @@ export const uploadProfilePicture = async (req,res, next) =>{
 }
 
 export const uploadProfilePictureCloud = async (req, res, next) => {
-    const user = req.user;
-    const file = req.file;
+  const user = req.user;
+  const file = req.file;
 
+  if (!file) {
+    throw new Error("No file uploaded", { cause: 400 });
+  }
 
+  try {
     const { secure_url, public_id } = await cloudinary.uploader.upload(file.path, {
-        folder: `Sarahah/users/${user._id}/profilePic`,
-        public_id: "profilePic",
-        overwrite: true
+      folder: `Sarahah/users/${user._id}/profilePic`,
+      public_id: "profilePic",
+      overwrite: true
     });
 
-    // ✅ Save both fields nested inside profilePic
     await User.updateOne(
-        { _id: user._id },
-        { profilePic: { secure_url, public_id } }  
+      { _id: user._id },
+      { profilePic: { secure_url, public_id } }
     );
 
+    // Delete temp file after upload
+    fs.unlinkSync(file.path);
+
     return res.status(200).json({
-        message: "Profile picture uploaded successfully",
-        success: true,
-        data: { secure_url, public_id }
+      message: "Profile picture uploaded successfully",
+      success: true,
+      data: { secure_url, public_id }
     });
+  } catch (err) {
+    // Clean up temp file if upload fails
+    if (file?.path && fs.existsSync(file.path)) {
+      fs.unlinkSync(file.path);
+    }
+    throw new Error("Failed to upload image: " + err.message, { cause: 500 });
+  }
 };
