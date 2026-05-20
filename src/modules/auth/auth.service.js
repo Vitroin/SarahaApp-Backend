@@ -8,11 +8,9 @@ import { generateToken } from "../../utils/token/index.js";
 export const register = async (req, res, next) => {
   const { fullName, email, password, phoneNumber, dob } = req.body;
 
-  const userExist = await User.findOne({
-    $or: [
-      { email: { $exists: true, $ne: null, $eq: email } },
-      { phoneNumber: { $exists: true, $ne: null, $eq: phoneNumber } }
-    ]
+  const userExist = await User.findOne(
+      {email: { $exists: true, $ne: null, $eq: email } ,
+    
   });
 
   if (userExist) throw new Error("User already exists", { cause: 409 });
@@ -21,8 +19,6 @@ export const register = async (req, res, next) => {
     fullName,
     email,
     password: hashPasword(password),
-    phoneNumber,
-    dob
   });
 
   const { otp, otpExpire } = generateOTP(15);
@@ -44,13 +40,11 @@ export const register = async (req, res, next) => {
 };
 
 export const login = async (req, res, next) => {
-  const { email, phoneNumber, password } = req.body;
+  const { email, password } = req.body;
 
   const userExist = await User.findOne({
-    $or: [
-      { email: { $exists: true, $ne: null, $eq: email } },
-      { phoneNumber: { $exists: true, $ne: null, $eq: phoneNumber } }
-    ]
+      email: { $exists: true, $ne: null, $eq: email } 
+      
   });
 
   if (!userExist) throw new Error("Incorrect Credentials", { cause: 401 });
