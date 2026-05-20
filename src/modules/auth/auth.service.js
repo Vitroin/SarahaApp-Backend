@@ -95,6 +95,7 @@ export const verifyAccount = async (req, res, next) => {
   });
 };
 
+
 export const sendOTP = async (req, res, next) => {
   const { email } = req.body;
   const { otp, otpExpire } = generateOTP(15);
@@ -111,8 +112,10 @@ export const sendOTP = async (req, res, next) => {
   return res.status(200).json({ message: "OTP sent successfully", success: true });
 };
 
+
+
 export const logout = async (req, res, next) => {
   const token = req.headers.authorization;
-  await Token.create({ token, user: req.user._id, type: "access" });
+  await Token.create({ token, user: req.user._id,});
   return res.status(200).json({ message: "Logout successful", success: true });
 };
