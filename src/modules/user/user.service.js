@@ -43,33 +43,6 @@ export const getMe = async (req, res, next) => {
 };
 
 
-export const uploadProfilePicture = async (req,res, next) =>{
-        if (req.user.profilePic){
-            fs.unlinkSync(req.user.profilePic)
-        }
-
-        if (!req.file) {
-            throw new Error("No file uploaded", { cause: 400 });
-        }
-        const userExist = await User.findByIdAndUpdate(
-        req.user._id,
-        {
-            profilePic: req.file.path
-        },
-        {new: true}
-    )
-    if (!userExist){
-        throw new Error("User not found", { cause: 404 });
-    }
-
-    return res.status(200).json({
-        message: "Profile picture uploaded successfully",
-        success: true,
-        data: userExist
-    });
-
-}
-
 export const uploadProfilePictureCloud = async (req, res, next) => {
   const user = req.user;
   const file = req.file;

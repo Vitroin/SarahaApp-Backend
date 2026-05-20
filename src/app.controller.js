@@ -1,4 +1,4 @@
-import { authRouter, userRouter, messageRouter } from './modules/index.js';
+import { authRouter, userRouter } from './modules/index.js';
 import { connectDB } from './DB/connection.js';
 import cors from 'cors';
 import fs from 'fs';
@@ -15,7 +15,6 @@ export function bootstrap(app,express){
 
     app.use("/auth", authRouter);
     app.use("/user", userRouter);
-    app.use("/message", messageRouter);
 
     // Global Error Handler
     app.use( globalErrorHandler );
